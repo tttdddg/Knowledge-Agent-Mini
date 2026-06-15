@@ -12,6 +12,7 @@ The Web UI is served at ``http://127.0.0.1:8000``.
 from __future__ import annotations
 
 import asyncio
+import logging
 import math
 import os
 import sqlite3
@@ -71,7 +72,24 @@ from app.services.knowledge_service import ingest_article, search_knowledge
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Initialise the database on startup."""
+    """Initialise the database and logging on startup."""
+    # Ensure log directory exists
+    _LOG_DIR = _PROJECT_ROOT / "logs"
+    _LOG_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Configure app-level file logging
+    app_handler = logging.FileHandler(
+        str(_LOG_DIR / "app.log"), encoding="utf-8"
+    )
+    app_handler.setFormatter(
+        logging.Formatter(
+            "%(asctime)s %(levelname)s [%(name)s] %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+    )
+    logging.getLogger("app").addHandler(app_handler)
+    logging.getLogger("app").setLevel(logging.INFO)
+
     init_db()
     yield
 

@@ -229,10 +229,11 @@ def search_knowledge(
         message = f"共找到 {len(final)} 条相关内容"
 
     logger.info(
-        "search request_id=%s query=%r top_k=%d result_count=%d duration_ms=%d",
+        "search request_id=%s query=%r top_k=%d threshold=%.2f result_count=%d duration_ms=%d",
         request_id,
         query,
         top_k,
+        threshold,
         len(final),
         duration_ms,
     )
