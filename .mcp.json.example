@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "knowledge-search": {
+      "type": "stdio",
+      "command": "python",
+      "args": [
+        "mcp_server/server.py"
+      ],
+      "env": {
+        "KNOWLEDGE_API_BASE": "http://127.0.0.1:8000",
+        "MCP_REQUEST_TIMEOUT": "10"
+      }
+    }
+  }
+}
