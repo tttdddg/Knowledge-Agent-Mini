@@ -37,8 +37,12 @@ from app.schemas import (
     HealthResponse,
     ErrorResponse,
     ErrorDetail,
+    SearchRequest,
+    SearchResponse,
     SuccessResponse,
 )
+from app.services.embedding_service import embedding_service
+from app.services.knowledge_service import ingest_article, search_knowledge
 
 
 @asynccontextmanager
@@ -81,7 +85,7 @@ def health(db: sqlite3.Connection = Depends(get_db)) -> HealthResponse:
     return HealthResponse(
         status="ok",
         database=db_ok,
-        model_loaded=False,  # Embedding model is lazy-loaded later
+        model_loaded=embedding_service.is_loaded,
         article_count=article_count,
     )
 
@@ -99,8 +103,9 @@ def create_article(
     """
     Create a new article from a JSON payload.
 
-    The article is saved immediately; text chunking and embedding
-    generation happen in a later processing step.
+    The article is saved, chunked, and embedded inside a single transaction.
+    If embedding fails the article insert is rolled back so the database never
+    contains an article without chunks.
     """
     try:
         cursor = db.execute(
@@ -116,13 +121,19 @@ def create_article(
                 utcnow(),
             ),
         )
-        db.commit()
         article_id = cursor.lastrowid
-    except sqlite3.Error as exc:
+
+        # Chunk + embed inside the same transaction.
+        chunk_count = ingest_article(article_id, body.content, db)
+
+        db.commit()
+    except (sqlite3.Error, AppException):
+        db.rollback()
+        raise
+    except Exception as exc:
         db.rollback()
         raise AppException(
             message=f"保存文章失败：{exc}",
-            details=None,
         ) from exc
 
     return JSONResponse(
@@ -131,7 +142,7 @@ def create_article(
             data=ArticleData(
                 id=article_id,
                 title=body.title,
-                chunk_count=0,
+                chunk_count=chunk_count,
             )
         ).model_dump(),
     )
@@ -199,6 +210,30 @@ def list_articles(
             )
         ).model_dump(),
     )
+
+
+# ---------------------------------------------------------------------------
+# Search endpoint
+# ---------------------------------------------------------------------------
+
+
+@app.post("/api/search")
+def search(
+    body: SearchRequest,
+    db: sqlite3.Connection = Depends(get_db),
+) -> JSONResponse:
+    """
+    Semantic search over the knowledge base.
+
+    Returns the top-K articles whose chunks are most similar to *query*,
+    together with the matching snippet, source, and similarity score.
+    """
+    result = search_knowledge(
+        query=body.query,
+        db=db,
+        top_k=body.top_k,
+    )
+    return JSONResponse(status_code=200, content=result)
 
 
 # ---------------------------------------------------------------------------

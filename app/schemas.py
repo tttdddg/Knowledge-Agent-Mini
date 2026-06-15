@@ -132,3 +132,53 @@ class ArticleListData(BaseModel):
     page_size: int
     total: int
     total_pages: int
+
+
+# ---------------------------------------------------------------------------
+# Search
+# ---------------------------------------------------------------------------
+
+
+class SearchRequest(BaseModel):
+    """Payload for ``POST /api/search``."""
+
+    query: str = Field(
+        ...,
+        min_length=1,
+        max_length=500,
+        description="自然语言查询，1–500 字符",
+    )
+    top_k: int = Field(
+        default=3,
+        ge=1,
+        le=5,
+        description="返回结果数量，1–5",
+    )
+
+    @field_validator("query")
+    @classmethod
+    def query_not_blank(cls, v: str) -> str:
+        stripped = v.strip()
+        if not stripped:
+            raise ValueError("查询内容不能为空")
+        return stripped
+
+
+class SearchResultItem(BaseModel):
+    """A single deduplicated search result."""
+
+    article_id: int
+    title: str
+    snippet: str
+    source_name: Optional[str] = None
+    score: float
+
+
+class SearchResponse(BaseModel):
+    """Full response for ``POST /api/search``."""
+
+    success: bool = True
+    request_id: str
+    query: str
+    results: list[SearchResultItem]
+    message: str

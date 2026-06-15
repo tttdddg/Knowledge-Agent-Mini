@@ -33,6 +33,8 @@ DATABASE_PATH: str = _env("DATABASE_PATH", str(PROJECT_ROOT / "data" / "knowledg
 # Embedding
 # ---------------------------------------------------------------------------
 EMBEDDING_MODEL: str = _env("EMBEDDING_MODEL", "BAAI/bge-small-zh-v1.5")
+HF_ENDPOINT: str = _env("HF_ENDPOINT", "https://huggingface.co")
+HF_HUB_DISABLE_SYMLINKS_WARNING: str = _env("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
 CHUNK_SIZE: int = int(_env("CHUNK_SIZE", "300"))
 CHUNK_OVERLAP: int = int(_env("CHUNK_OVERLAP", "50"))
 
