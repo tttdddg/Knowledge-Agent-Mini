@@ -16,6 +16,8 @@ build/
 
 # Database (runtime data)
 data/*.db
+data/*.db-shm
+data/*.db-wal
 
 # Logs (runtime)
 logs/*.log
