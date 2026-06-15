@@ -1,0 +1,43 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# Environment (may contain secrets)
+.env
+
+# Database (runtime data)
+data/*.db
+
+# Logs (runtime)
+logs/*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Model cache (large files)
+models/
+*.bin
+*.safetensors
+
+# Screenshots (runtime)
+screenshots/*
+!screenshots/.gitkeep
+
+# MCP config (may contain local paths)
+.mcp.json

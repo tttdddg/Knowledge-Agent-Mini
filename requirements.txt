@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+python-multipart
+numpy
+sentence-transformers
+httpx
+mcp[cli]>=1.2.0
+pytest
