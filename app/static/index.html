@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knowledge Agent Mini</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>Knowledge Agent Mini</h1>
+    <span id="status-indicator" class="status-indicator status-loading">检测中…</span>
+  </header>
+
+  <main class="main">
+    <!-- ===== Left Panel: Knowledge Entry & Article List ===== -->
+    <section class="panel panel-left">
+      <h2>知识录入</h2>
+
+      <!-- Direct entry form -->
+      <form id="article-form" class="card">
+        <label class="field">
+          <span class="field-label">文章标题 <em>(必填，1–100 字)</em></span>
+          <input type="text" id="input-title" name="title" maxlength="100" placeholder="输入文章标题…" required>
+        </label>
+        <label class="field">
+          <span class="field-label">文章正文 <em>(必填，最少 10 字)</em></span>
+          <textarea id="input-content" name="content" rows="6" maxlength="50000" placeholder="输入文章正文…" required></textarea>
+        </label>
+        <div class="form-actions">
+          <button type="submit" id="btn-save" class="btn btn-primary">保存文章</button>
+          <span id="save-status" class="inline-status"></span>
+        </div>
+      </form>
+
+      <!-- TXT upload form -->
+      <form id="upload-form" class="card">
+        <h3>上传 TXT 文件</h3>
+        <p class="hint">支持 UTF-8 / GB18030 编码，最大 1 MB。标题为空时使用文件名。</p>
+        <div class="upload-row">
+          <input type="file" id="input-file" name="file" accept=".txt">
+          <input type="text" id="input-upload-title" name="upload-title" maxlength="100" placeholder="可选标题">
+          <button type="submit" id="btn-upload" class="btn btn-secondary">上传</button>
+        </div>
+        <span id="upload-status" class="inline-status"></span>
+      </form>
+
+      <!-- Article list -->
+      <section class="card">
+        <h3>文章列表</h3>
+        <div id="article-list-container">
+          <p id="article-list-empty" class="muted">暂无文章，请先录入或上传。</p>
+          <table id="article-table" class="article-table" style="display:none">
+            <thead>
+              <tr>
+                <th>标题</th>
+                <th>来源</th>
+                <th>分块</th>
+                <th>时间</th>
+              </tr>
+            </thead>
+            <tbody id="article-tbody"></tbody>
+          </table>
+          <div id="pagination" class="pagination" style="display:none">
+            <button id="btn-prev" class="btn btn-sm" disabled>上一页</button>
+            <span id="page-info"></span>
+            <button id="btn-next" class="btn btn-sm">下一页</button>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ===== Right Panel: Search ===== -->
+    <section class="panel panel-right">
+      <h2>知识查询</h2>
+
+      <div class="card">
+        <div class="search-row">
+          <input type="text" id="input-query" maxlength="500" placeholder="输入自然语言查询…" autocomplete="off">
+          <button id="btn-search" class="btn btn-primary">查询</button>
+        </div>
+        <div class="search-meta">
+          <label>返回数量：
+            <select id="select-topk">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </label>
+          <span id="search-status" class="inline-status"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>查询结果</h3>
+        <pre id="search-result" class="result-area">请输入查询关键词后点击「查询」。</pre>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
