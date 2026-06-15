@@ -114,7 +114,8 @@ Embedding 语义检索
 
 ## 运行效果
 
-![image-20260615150025835](C:\Users\20914\AppData\Roaming\Typora\typora-user-images\image-20260615150025835.png)
+<img width="3056" height="1480" alt="屏幕截图 2026-06-15 150013" src="https://github.com/user-attachments/assets/1e19fb8c-7556-4191-b3e7-42addd6d383a" />
+
 
 ------
 
